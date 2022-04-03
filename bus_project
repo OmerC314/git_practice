@@ -1,0 +1,49 @@
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+
+#importing the csv file
+df = pd.read_csv(r"C:\Users\omeri\Desktop\bus_project\bus_rides_2019.csv", sep='|')
+
+#creating the df of line 19, only school months, morning hours, and direction TO the UNI
+df_d1 = df[(df["operator_nm"] == "אגד") & (df["OperatorLineId"] == 19.0) & (df["cluster_nm"].str.contains("ירושלים")) & ((df["hour_a"] > 6) & (df["hour_a"] < 10)) & (df["Direction"] == 1)]
+df_d1.sort_values(by=["month_key", "hour_a"])
+
+#creating the average of every line = every hour in month
+dates = []
+for i in range(1, 32):
+    dates.append(str(i))
+    
+df_d1["average"] = df_d1.loc[:, dates].mean(axis=1)
+#print(df_d1)
+
+#plotting the df
+df_for_plot_7 = df_d1[["hour_a", "month_key", "average"]]
+df_for_plot_7 = df_for_plot_7[df_for_plot_7["hour_a"] == 7]
+arr_7 = df_for_plot_7["average"].to_numpy()
+#print(arr_7)
+
+df_for_plot_8 = df_d1[["hour_a", "month_key", "average"]]
+df_for_plot_8 = df_for_plot_8[df_for_plot_8["hour_a"] == 8]
+arr_8 = df_for_plot_8["average"].to_numpy()
+#print(arr_8)
+
+df_for_plot_9 = df_d1[["hour_a", "month_key", "average"]]
+df_for_plot_9 = df_for_plot_9[df_for_plot_9["hour_a"] == 9]
+arr_9 = df_for_plot_9["average"].to_numpy()
+#print(arr_9)
+
+x = np.arange(12)
+width = 0.3
+fig, ax = plt.subplots()
+fig.set_figwidth(10)
+fig.set_figheight(10)
+
+rect1 = ax.bar(x, arr_7, width, label='7', color='r')
+rect2 = ax.bar(x+width, arr_8, width, label='8', color='g')
+rect3 = ax.bar(x+width*2, arr_9, width, label='9', color='b')
+
+plt.xticks(x+width, x+1)
+plt.legend( (rect1, rect2, rect3), ('7', '8', '9') )
+
+plt.show()
