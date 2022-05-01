@@ -2,9 +2,7 @@ from calendar import month
 from urllib.parse import urlencode
 import requests
 import http.client
-import pandas as pd
 import datetime
-
 
 def get_tase_data(index_name):
     conn = http.client.HTTPSConnection("openapigw.tase.co.il")
@@ -18,38 +16,22 @@ def get_tase_data(index_name):
     'accept': "application/json"
     }
 
-    if index_name == 'gov bond':
-        req = requests.post(url, headers=headers, data={'pType': "1", 'TotalRec': 1, 'pageNum': 1, 'oId': "602", 'lang': "0"})
-
-    elif index_name == 'tel aviv banks':
-        req = requests.post(url, headers=headers, data={'pType': "1", 'TotalRec': 1, 'pageNum': 1, 'oId': "164", 'lang': "0"})
-
-    elif index_name == 'tel bond 20':
-        conn.request("GET", f"/tase/prod/api/v1/indices-end-of-day-data/index-end-of-day-data/{year}/{month}}/{day}?indexId=142", headers=headers)
+    if index_name == 'tel bond 20':
+        conn.request("GET", f"/tase/prod/api/v1/indices-end-of-day-data/index-end-of-day-data/{year}/{month}/{day}?indexId=142", headers=headers)
         res = conn.getresponse()
         data = res.read()
-
-    elif index_name == 'tel bond 40':
-        req = requests.post(url, headers=headers, verify=False, data={'pType': "1", 'TotalRec': 1, 'pageNum': 1, 'oId': "708", 'lang': "0"})
-
-    elif index_name == 'tel bond 60':
-        req = requests.post(url, headers=headers, data={'pType': "1", 'TotalRec': 1, 'pageNum': 1, 'oId': "709", 'lang': "0"})
-
-    elif index_name == 'Tel 125':
-        req = requests.post(url, headers=headers, data={'pType': "1", 'TotalRec': 1, 'pageNum': 1, 'oId': "137", 'lang': "0"})
-
-    elif index_name == 'Tel 35':
-        req = requests.post(url, headers=headers, data={'pType': "1", 'TotalRec': 1, 'pageNum': 1, 'oId': "142", 'lang': "0"})
+        print(data)
 
     else:
         return 'Enter Valid Index'
 
-    gov_bond_index_dict = req.json().get('Items')
-    gov_bond_index_data = pd.DataFrame.from_records(gov_bond_index_dict)
+    # gov_bond_index_dict = req.json().get('Items')
+    # gov_bond_index_data = pd.DataFrame.from_records(gov_bond_index_dict)
 
-    gov_bond_index_data = gov_bond_index_data.set_index('TradeDate')
-    gov_bond_index_data.index = pd.to_datetime(gov_bond_index_data.index, format='%d/%m/%Y')
-    gov_bond_index_data = gov_bond_index_data.sort_index()
-    gov_bond_index_data.index = gov_bond_index_data.index.strftime('%d/%m/%Y')
-    return gov_bond_index_data['CloseRate']
+    # gov_bond_index_data = gov_bond_index_data.set_index('TradeDate')
+    # gov_bond_index_data.index = pd.to_datetime(gov_bond_index_data.index, format='%d/%m/%Y')
+    # gov_bond_index_data = gov_bond_index_data.sort_index()
+    # gov_bond_index_data.index = gov_bond_index_data.index.strftime('%d/%m/%Y')
+    # return gov_bond_index_data['CloseRate']
 
+get_tase_data('tel bond 20')
