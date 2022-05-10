@@ -3,13 +3,18 @@ from urllib.parse import urlencode
 import requests
 import http.client
 import datetime
+import json
 
 def get_tase_data(index_name):
     conn = http.client.HTTPSConnection("openapigw.tase.co.il")
-    token = conn.request('POST', "/tase/prod/oauth/oauth2/token", headers={'Authorization': 'Basic NjJhMjlkNzNmZjNhY2JiMzJmZDc4ZTdmMjcwODE2MmE6MDVhM2EwZDY5ZGNjZmRkNTQzNWQ3MWNjMTIzM2RmZjA=', 'Content-Type':'application/x-www-form-urlencoded'}, body={'mode' : 'urlencoded', 'grant_type': 'client_credentials', 'scope': 'tase'})
-    year = datetime.datetime.today().year
-    month = datetime.datetime.today().month
-    day = datetime.datetime.today().day
+    body_requests= json.dumps({'grant_type':'client_credentials', 'scope':'tase'})
+    tokenreq = conn.request("POST", f"/tase/prod/oauth/oauth2/token", headers={'Authorization':'Basic NjJhMjlkNzNmZjNhY2JiMzJmZDc4ZTdmMjcwODE2MmE6MDVhM2EwZDY5ZGNjZmRkNTQzNWQ3MWNjMTIzM2RmZjA=', 'Content-Type':'application/x-www-form-urlencoded'}, body=body_requests)
+    #tokenres = conn.getresponse()
+    #token = json.loads(tokenreq.text)['token']
+    print("token: " + str(tokenreq))
+    year = str(datetime.datetime.today().year)
+    month = str(datetime.datetime.today().month)
+    day = str(datetime.datetime.today().day)
 
     headers = {'Authorization': "Bearer REPLACE_BEARER_TOKEN",
     'accept-language': "he-IL",
